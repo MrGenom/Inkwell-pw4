@@ -2,6 +2,8 @@
 
 This is a fork of [Inkwell](https://github.com/pragyaangaur/Inkwell) by Pragyaan Gaur, modified by Pietro Boccaletto to also run on the **Kindle Paperwhite 4**. The original runs on the Paperwhite 3, and this fork keeps it working there. [The Paperwhite 4 port](#the-paperwhite-4-port) lists what changed.
 
+**This branch** adds a file manager, USB networking on Windows 11, a Wi-Fi fix after sleep, more command-line tools and a Docker build, and drops Doom and Minecraft. See [docs/PW4.md](docs/PW4.md).
+
 Featured on Hackaday: [It's Alpine Linux, On A Kindle Paperwhite 3](https://hackaday.com/2026/11/06/its-alpine-linux-on-a-kindle-paperwhite-3/) (6 November 2026).
 
 Inkwell is a small Linux system of its own for the jailbroken Kindle Paperwhite 3 and Paperwhite 4. Amazon's bootloader and kernel still start the device, and everything after that is replaced: the home screen, the apps, Wi-Fi, USB networking and SSH all come from an Alpine Linux userspace built for the e-ink panel.
@@ -68,7 +70,7 @@ The Kindle reboots, shows the Inkwell splash for a moment and opens the home scr
 
 ## Use
 
-Tap an app to open it, and tap the round arrow in the top left corner to go back. In Quill and the three games the power button also goes back to the home screen. On the home screen the power button puts the Kindle to sleep, and pressing it again wakes it.
+Tap an app to open it, and tap the round arrow in the top left corner to go back. In Quill and TriKing the power button also goes back to the home screen. On the home screen the power button puts the Kindle to sleep, and pressing it again wakes it.
 
 **Wi-Fi.** Open Wi-Fi, tap **Scan**, tap your network and type its password. Inkwell remembers it in `linux/wifi.conf` and joins it at every boot. Wi-Fi is needed for the browser, arXiv, `getmodel` and setting the clock.
 
