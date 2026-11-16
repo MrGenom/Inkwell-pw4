@@ -14,6 +14,7 @@ jailbroken with SpiderCat.
 | **Add-ons at boot.** `own-init` starts every executable in `/etc/own/rc.d` in the background (log: `/var/log/own-rc.log`). | `src/rootfs/sbin/own-init` |
 | **Wi-Fi after sleep.** After a suspend, Wi-Fi could reconnect while `wlan0` stayed without an address until a reboot. `wifi-dhcp-watchdog` checks every 20 s and renews or restarts DHCP. | `src/rootfs/etc/own/rc.d/` |
 | **More tools in the image**: htop, vim, nano, tmux, git, rsync and an SFTP server (for WinSCP, FileZilla or sshfs). | `build-rootfs.sh` |
+| **Terminal programs that suit e-ink**, with settings for the panel: no colours, no clocks or progress bars that redraw on a timer. Their settings and data live on the Kindle drive and survive updates (see Terminal programs). | `build-rootfs.sh`, `src/rootfs/etc/profile.d/inkwell.sh`, `src/rootfs/etc/tmux.conf`, `src/rootfs/usr/local/share/inkwell/config/` |
 | **No Doom and no Minecraft.** | `src/rootfs/etc/own/apps` |
 | **Wi-Fi and SSH live in Settings.** Their buttons at the top of Settings open the same apps, and closing them comes back to Settings; the home screen no longer has their icons. | `src/ui/settings.c`, `src/rootfs/etc/own/apps` |
 | **A pull-down shade on the home screen.** A swipe down from the top edge, or a tap on the status line, shows the Wi-Fi network and address, the battery, the frontlight slider (drag it) and a **Settings** button; a swipe up, a tap below it or the power button closes it. The slider and the Settings icon left the home screen for it. | `src/ui/home.c`, `src/rootfs/etc/own/apps` |
@@ -82,6 +83,40 @@ ssh -i keys/kindle_ed25519 -p 2222 root@192.168.15.244
 ```
 
 Over Wi-Fi, **Settings → SSH** starts a server on port 2022.
+
+## Terminal programs
+
+These programs redraw only when you press a key, which suits e-ink. Together
+with their manual pages they add about 20 MB to the image.
+
+| Command | What it is |
+| --- | --- |
+| `newsboat` | RSS reader. Feeds go in `linux/config/newsboat/urls`; `R` reloads them, nothing loads on a timer. Links open in `w3m`. |
+| `lynx`, `w3m` | Web browsers that page through text, with numbered links |
+| `gmni` | Gemini client |
+| `calcurse` | Calendar and to-do list |
+| `t` (`todo.sh`) | todo.txt lists, kept in `todo/` on the drive |
+| `sdcv` | StarDict dictionary: put the `.ifo`, `.idx` and `.dict.dz` files in `stardict/` on the drive |
+| `man` | Manual pages (mandoc), including the Linux man-pages |
+| `bc`, `units` | Calculator and unit converter |
+| `nnn` | File manager |
+| `tig` | git browser |
+| `catgirl` | IRC client |
+| `weather [place]` | Weather from wttr.in as plain narrow text |
+
+What `/etc/profile.d/inkwell.sh` sets for Terminal and SSH sessions:
+
+- `NO_COLOR=1`, and `less` as the pager, `nano` as the editor.
+- `XDG_CONFIG_HOME=/mnt/us/linux/config` and `XDG_DATA_HOME=/mnt/us/linux/data`,
+  so newsboat, calcurse, htop, git, nnn, tig and catgirl keep their settings
+  and data on the drive. An update replaces `alpine.img` and with it `/root`.
+- On first use it copies the defaults from `/usr/local/share/inkwell/config`
+  (newsboat in black and white with bold for unread items and no reload on
+  start, todo.sh without colours) and never overwrites them afterwards.
+- Aliases: `htop` redraws every 10 seconds, `apk` shows no progress bar.
+
+`/etc/tmux.conf` takes the clock off tmux's status line and leaves the line
+in reverse video.
 
 ## Files: notes
 
