@@ -17,6 +17,8 @@ jailbroken with SpiderCat.
 | **No Doom and no Minecraft.** | `src/rootfs/etc/own/apps` |
 | **Wi-Fi and SSH live in Settings.** Their buttons at the top of Settings open the same apps, and closing them comes back to Settings; the home screen no longer has their icons. | `src/ui/settings.c`, `src/rootfs/etc/own/apps` |
 | **A pull-down shade on the home screen.** A swipe down from the top edge, or a tap on the status line, shows the Wi-Fi network and address, the battery, the frontlight slider (drag it) and a **Settings** button; a swipe up, a tap below it or the power button closes it. The slider and the Settings icon left the home screen for it. | `src/ui/home.c`, `src/rootfs/etc/own/apps` |
+| **`tap` works on the Paperwhite 4.** It finds the touch panel and the power button the way the apps do, instead of writing to event1 (a power key on the Paperwhite 4); `tap drag` takes swipes, `tap which` shows the devices. | `src/test/tap.c` |
+| **Optional parts.** `NO_QUILL=1` builds without Quill and its model, `NO_GAMES=1` without Chess and TriKing (see Build). Releases from 1.2.2-pw4 on are built with both. | `build-rootfs.sh`, `tools/` |
 | **Build fixes.** `release.sh` no longer copies an example config that was never committed (every release build failed on it), scripts keep LF line endings on Windows, and `tools/docker-build.sh` builds the release with Docker only. | `tools/`, `.gitattributes` |
 
 ## Build
@@ -24,10 +26,10 @@ jailbroken with SpiderCat.
 With Docker (any OS; on Windows run it from Git Bash):
 
 ```sh
-tools/docker-build.sh 1.2.0-pw4
+tools/docker-build.sh 1.2.3-pw4
 ```
 
-The release lands in `dist/Inkwell-1.2.0-pw4.zip`.
+The release lands in `dist/Inkwell-1.2.3-pw4.zip`.
 
 Two parts can be left out of a build, each with its home screen entry. Set
 either or both in the environment (they reach `tools/release-gh.sh` too):
