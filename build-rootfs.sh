@@ -26,15 +26,14 @@ MIRROR=https://dl-cdn.alpinelinux.org/alpine/v3.24
 # the code Quill writes in the terminal. The second line is tools for working
 # on the Kindle over SSH; openssh-sftp-server lets SFTP clients (WinSCP,
 # FileZilla, sshfs) talk to Dropbear. The third line is terminal programs that
-# suit e-ink, because they redraw only on a key press: RSS, web and Gemini,
-# calendar, to-do list, dictionary, manual pages, calculators, a file manager,
-# a git browser and IRC. Their e-ink settings are in /etc/profile.d/inkwell.sh,
-# /etc/tmux.conf and /usr/local/share/inkwell/config. The last line is their
-# manual pages.
+# suit e-ink, because they redraw only on a key press: an RSS reader, a
+# dictionary, manual pages and a unit converter. Their e-ink settings are in
+# /etc/profile.d/inkwell.sh, /etc/tmux.conf and /usr/local/share/inkwell/config.
+# The last line is manual pages for the programs in the image.
 PKGS="dropbear dropbear-scp dropbear-dbclient busybox-extras wpa_supplicant tzdata curl mupdf-tools python3 python3-pyc"
 PKGS="$PKGS htop vim nano tmux git rsync openssh-sftp-server"
-PKGS="$PKGS newsboat lynx w3m gmni calcurse todo.txt-cli sdcv mandoc man-pages less bc units nnn tig catgirl"
-PKGS="$PKGS newsboat-doc lynx-doc w3m-doc calcurse-doc mandoc-doc less-doc bc-doc units-doc nnn-doc tig-doc catgirl-doc tmux-doc htop-doc nano-doc rsync-doc curl-doc git-doc"
+PKGS="$PKGS newsboat sdcv mandoc man-pages less units"
+PKGS="$PKGS newsboat-doc mandoc-doc less-doc units-doc tmux-doc htop-doc nano-doc rsync-doc curl-doc git-doc"
 
 ./build-ui.sh
 [ "$NO_QUILL" = 1 ] || ./build-llm.sh >/dev/null

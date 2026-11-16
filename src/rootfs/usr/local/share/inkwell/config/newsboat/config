@@ -1,9 +1,9 @@
 # newsboat on e-ink. Feeds load when you press R (or r for one feed), not on
 # start or on a timer, and the colours become black and white with bold for
-# unread items. Feeds go in "urls" next to this file.
+# unread items. Feeds go in "urls" next to this file. There is no browser for
+# links in the terminal: an article shows the text its feed carries.
 auto-reload no
 reload-threads 3
-browser "w3m %u"
 confirm-exit no
 show-read-feeds yes
 text-width 72

@@ -7,7 +7,6 @@ export EDITOR=nano PAGER=less MANPAGER=less LESS=-iR
 # The terminal programs keep their settings and data on the Kindle drive, so
 # they survive an update, which replaces alpine.img and with it /root.
 export XDG_CONFIG_HOME=/mnt/us/linux/config XDG_DATA_HOME=/mnt/us/linux/data
-export W3M_DIR="$XDG_DATA_HOME/w3m"
 mkdir -p "$XDG_CONFIG_HOME" "$XDG_DATA_HOME" 2>/dev/null
 # StarDict dictionaries for sdcv (.ifo, .idx and .dict.dz files) go in the
 # drive's stardict folder.
@@ -23,6 +22,5 @@ unset D f
 
 alias htop='htop -d 100' # redraw every 10 seconds instead of every second
 alias apk='apk --no-progress'
-alias t='todo.sh'
 # Weather as plain narrow text: "weather" for where the IP is, "weather Lviv".
 weather() { curl -s "wttr.in/$1?T0Qn"; }

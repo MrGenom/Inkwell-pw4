@@ -86,33 +86,26 @@ Over Wi-Fi, **Settings → SSH** starts a server on port 2022.
 
 ## Terminal programs
 
-These programs redraw only when you press a key, which suits e-ink. Together
-with their manual pages they add about 20 MB to the image.
+These programs redraw only when you press a key, which suits e-ink. With
+their manual pages they add about 10 MB to the image.
 
 | Command | What it is |
 | --- | --- |
-| `newsboat` | RSS reader. Feeds go in `linux/config/newsboat/urls`; `R` reloads them, nothing loads on a timer. Links open in `w3m`. |
-| `lynx`, `w3m` | Web browsers that page through text, with numbered links |
-| `gmni` | Gemini client |
-| `calcurse` | Calendar and to-do list |
-| `t` (`todo.sh`) | todo.txt lists, kept in `todo/` on the drive |
+| `newsboat` | RSS reader. Feeds go in `linux/config/newsboat/urls`; `R` reloads them, nothing loads on a timer. |
 | `sdcv` | StarDict dictionary: put the `.ifo`, `.idx` and `.dict.dz` files in `stardict/` on the drive |
-| `man` | Manual pages (mandoc), including the Linux man-pages |
-| `bc`, `units` | Calculator and unit converter |
-| `nnn` | File manager |
-| `tig` | git browser |
-| `catgirl` | IRC client |
+| `man` | Manual pages (mandoc), including the Linux man-pages, shown in `less` |
+| `units` | Unit converter: `units '1 mile' km` |
 | `weather [place]` | Weather from wttr.in as plain narrow text |
 
 What `/etc/profile.d/inkwell.sh` sets for Terminal and SSH sessions:
 
 - `NO_COLOR=1`, and `less` as the pager, `nano` as the editor.
 - `XDG_CONFIG_HOME=/mnt/us/linux/config` and `XDG_DATA_HOME=/mnt/us/linux/data`,
-  so newsboat, calcurse, htop, git, nnn, tig and catgirl keep their settings
-  and data on the drive. An update replaces `alpine.img` and with it `/root`.
+  so newsboat, htop and git keep their settings and data on the drive. An
+  update replaces `alpine.img` and with it `/root`.
 - On first use it copies the defaults from `/usr/local/share/inkwell/config`
   (newsboat in black and white with bold for unread items and no reload on
-  start, todo.sh without colours) and never overwrites them afterwards.
+  start) and never overwrites them afterwards.
 - Aliases: `htop` redraws every 10 seconds, `apk` shows no progress bar.
 
 `/etc/tmux.conf` takes the clock off tmux's status line and leaves the line
