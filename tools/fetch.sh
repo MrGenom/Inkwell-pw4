@@ -39,9 +39,11 @@ if [ ! -f $D/sysroot/usr/lib/libc.a ]; then
     done
 fi
 
-get https://github.com/ggml-org/llama.cpp/archive/refs/tags/v0.7.0.tar.gz $D/llama/src.tar.gz \
-    55d67acf3ad2ad747a9bbeb75f9f0e173dbcc0d1753a471038a90c819421c5e1
-[ -d $D/llama/llama.cpp-0.7.0 ] || tar -xzf $D/llama/src.tar.gz -C $D/llama
-
-tools/get-models.sh
+# Quill's parts; NO_QUILL=1 builds without Quill and needs neither.
+if [ "$NO_QUILL" != 1 ]; then
+    get https://github.com/ggml-org/llama.cpp/archive/refs/tags/v0.7.0.tar.gz $D/llama/src.tar.gz \
+        55d67acf3ad2ad747a9bbeb75f9f0e173dbcc0d1753a471038a90c819421c5e1
+    [ -d $D/llama/llama.cpp-0.7.0 ] || tar -xzf $D/llama/src.tar.gz -C $D/llama
+    tools/get-models.sh
+fi
 echo "downloads are ready"

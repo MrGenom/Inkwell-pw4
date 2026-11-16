@@ -3,6 +3,12 @@
 # the Alpine armv7 minirootfs, the packages in PKGS with their dependencies,
 # our overlay in src/rootfs, and the home screen, splash and games. Stages the
 # userstore files in kindle/linux/.
+#
+# Two optional parts can be left out, each with its home screen entry:
+#   NO_QUILL=1  Quill: the chatbot, quill-code, inkllm (llama.cpp), getmodel
+#               and the prompts; tools/fetch.sh then skips llama.cpp and the
+#               models, and tools/release.sh ships no model
+#   NO_GAMES=1  Chess and TriKing
 set -e
 cd "$(dirname "$0")"
 A=downloads/alpine
@@ -24,7 +30,7 @@ PKGS="dropbear dropbear-scp dropbear-dbclient busybox-extras wpa_supplicant tzda
 PKGS="$PKGS htop vim nano tmux git rsync openssh-sftp-server"
 
 ./build-ui.sh
-./build-llm.sh >/dev/null
+[ "$NO_QUILL" = 1 ] || ./build-llm.sh >/dev/null
 
 rm -rf "$S" "$IMG"
 mkdir -p "$S"
@@ -57,8 +63,20 @@ fi
 chmod 700 "$S/root" "$S/root/.ssh"
 chmod 1777 "$S/tmp"
 cp fonts/*.ttf "$S/usr/share/fonts/inkwell/"
-for p in home splash wifi settings notes sketch browser term chess books arxiv sshapp dashboard files quill quill-code inkllm tap; do cp out/$p "$S/usr/local/bin/"; done
-cp out/triking "$S/usr/local/games/"
+BINS="home splash wifi settings notes sketch browser term books arxiv sshapp dashboard files tap"
+[ "$NO_GAMES" = 1 ] || BINS="$BINS chess"
+[ "$NO_QUILL" = 1 ] || BINS="$BINS quill quill-code inkllm"
+for p in $BINS; do cp out/$p "$S/usr/local/bin/"; done
+[ "$NO_GAMES" = 1 ] || cp out/triking "$S/usr/local/games/"
+# What was left out goes from the overlay and the home screen as well.
+drop_apps() { grep -v "$@" "$S/etc/own/apps" > "$S/etc/own/apps.new" && mv "$S/etc/own/apps.new" "$S/etc/own/apps"; }
+if [ "$NO_QUILL" = 1 ]; then
+    rm -rf "$S/usr/local/bin/getmodel" "$S/usr/local/share/quill"
+    drop_apps '|/usr/local/bin/quill$'
+fi
+if [ "$NO_GAMES" = 1 ]; then
+    drop_apps -e '|/usr/local/bin/chess$' -e '|/usr/local/games/triking$'
+fi
 cp "$S/usr/share/zoneinfo/$TZ_NAME" "$S/etc/localtime"
 echo "$TZ_NAME" > "$S/etc/timezone"
 ln -sf /usr/local/bin/kindle "$S/usr/bin/kindle"

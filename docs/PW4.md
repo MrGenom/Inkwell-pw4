@@ -27,7 +27,22 @@ With Docker (any OS; on Windows run it from Git Bash):
 tools/docker-build.sh 1.2.0-pw4
 ```
 
-The release lands in `dist/Inkwell-1.2.0-pw4.zip`. Downloads are kept in the
+The release lands in `dist/Inkwell-1.2.0-pw4.zip`.
+
+Two parts can be left out of a build, each with its home screen entry. Set
+either or both in the environment (they reach `tools/release-gh.sh` too):
+
+| Flag | Leaves out |
+| --- | --- |
+| `NO_QUILL=1` | Quill: the chatbot, `quill-code` in the terminal, `inkllm` (llama.cpp), `getmodel`, the prompts and the model in the release. The build then also skips downloading llama.cpp and the models. |
+| `NO_GAMES=1` | Chess and TriKing |
+
+```sh
+NO_QUILL=1 NO_GAMES=1 tools/docker-build.sh 1.2.2-pw4
+```
+
+Installing such a build over one with Quill leaves `linux/models` on the
+Kindle's drive; delete it to get the space back. Downloads are kept in the
 Docker volume `inkwell-downloads`, so the first build takes the longest. On a
 Mac or Linux machine with the tools, the README's `tools/fetch.sh` and
 `tools/release.sh` work as before.

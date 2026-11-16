@@ -9,6 +9,7 @@
 # pushes the branch and the tag, and creates the GitHub release with the zip
 # and SHA256SUMS. Without a notes file GitHub writes the notes itself.
 # DRY_RUN=1 runs the checks only. RELEASE_BRANCH overrides "release".
+# NO_QUILL=1 and NO_GAMES=1 pass on to the build (see tools/docker-build.sh).
 #
 # The usual round: git switch release && git merge --ff-only dev, then this.
 set -e
@@ -30,7 +31,7 @@ git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null && die "tag 
 [ -z "$NOTES" ] || [ -f "$NOTES" ] || die "no notes file $NOTES"
 "$GH" auth status >/dev/null 2>&1 || die "gh is not logged in: gh auth login"
 
-echo "release-gh: $TAG from $BR at $(git rev-parse --short HEAD) to $REPO"
+echo "release-gh: $TAG from $BR at $(git rev-parse --short HEAD) to $REPO${NO_QUILL:+, NO_QUILL=$NO_QUILL}${NO_GAMES:+, NO_GAMES=$NO_GAMES}"
 [ -n "$DRY_RUN" ] && { echo "release-gh: dry run, stopping here"; exit 0; }
 
 tools/docker-build.sh "$V"

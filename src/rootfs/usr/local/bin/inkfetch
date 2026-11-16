@@ -46,7 +46,7 @@ def info():
     models = os.listdir("/mnt/us/linux/models") if os.path.isdir("/mnt/us/linux/models") else []
     ai = "Qwen2.5 Coder 0.5B" if any("qwen" in m for m in models) else "SmolLM2 135M"
     apps = sum(1 for l in open("/etc/own/apps") if "|" in l and not l.startswith("#"))
-    return [
+    rows = [
         (B + "root" + N + "@" + B + "inkwell" + N, None),
         ("─" * 24, None),
         ("Host", "Kindle Paperwhite 4" if pw4 else "Kindle Paperwhite 3"),
@@ -61,6 +61,8 @@ def info():
         ("Battery", bar(batt / 100) + " %d%%" % batt),
         ("Storage", "%.1f GB free" % free_gb),
     ]
+    # an image built with NO_QUILL=1 has no language model to speak of
+    return rows if os.path.exists("/usr/local/bin/inkllm") else [r for r in rows if r[0] != "AI"]
 
 
 KINDLE = [
