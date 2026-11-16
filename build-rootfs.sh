@@ -42,6 +42,7 @@ for rp in $(python3 tools/apkdeps.py downloads/APKINDEX.main,downloads/APKINDEX.
 done
 
 cp -R src/rootfs/. "$S/" # "dir/." copies the contents with both BSD and GNU cp
+chmod 755 "$S"/etc/own/rc.d/* # checkouts on Windows don't keep the exec bit
 mkdir -p "$S/root/.ssh" "$S/etc/dropbear" "$S/usr/share/fonts/inkwell" "$S/usr/local/games"
 # Your own SSH key (made by ./ssh.sh) and a fixed host key, so rebuilding the
 # image doesn't trip SSH's host key check. Release images set NO_KEYS=1 and

@@ -1,0 +1,21 @@
+#!/bin/sh
+# Started by own-init (rc.d hook).
+# After suspend/resume the Broadcom driver reloads its firmware and re-creates
+# wlan0. wpa_supplicant re-associates on its own, but udhcpc dies, so wlan0
+# stays without an address until the next reboot. Every 20 s: if Wi-Fi is
+# associated but wlan0 has no IPv4 address, (re)start or renew udhcpc.
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+PIDF=/run/udhcpc.wlan0.pid
+while :; do
+    sleep 20
+    [ -f /mnt/us/linux/wifi.off ] && continue
+    wpa_cli -p /run/wpa_supplicant -i wlan0 status 2>/dev/null | grep -q '^wpa_state=COMPLETED' || continue
+    ifconfig wlan0 2>/dev/null | grep -q 'inet addr:' && continue
+    if [ -f $PIDF ] && kill -0 "$(cat $PIDF)" 2>/dev/null; then
+        echo "$(date) wlan0 has no address, renewing"
+        kill -USR1 "$(cat $PIDF)"
+    else
+        echo "$(date) wlan0 has no address and udhcpc is gone, starting it"
+        udhcpc -i wlan0 -b -S -p $PIDF
+    fi
+done
