@@ -69,3 +69,24 @@ Over Wi-Fi, the **SSH** app starts a server on port 2022.
 - The Kindle's drive is `/mnt/us` in Linux mode and `/mnt/base-us` in Device mode.
 - New names are typed in Latin letters, as Inkwell's keyboard has no other.
 - `files [device|linux] [folder]` opens a mode and folder from the terminal.
+
+## Branches and releases
+
+| Branch | Role |
+| --- | --- |
+| `main` | a mirror of akaped/Inkwell, for pulling in the port's updates |
+| `dev` | ongoing work |
+| `release` | what is released; `v*-pw4` tags go here. Protected on GitHub against force pushes and deletion |
+
+To publish a release, bring `release` up to `dev` and run the script:
+
+```sh
+git switch release && git merge --ff-only dev
+tools/release-gh.sh 1.2.1-pw4            # or: tools/release-gh.sh 1.2.1-pw4 notes.md
+git switch dev
+```
+
+It checks the branch, the tree and the tag, builds the zip with Docker, tags
+and pushes, and publishes the GitHub release with the zip and `SHA256SUMS`
+(`DRY_RUN=1` runs only the checks). An urgent fix can go straight onto
+`release` and then be cherry-picked into `dev`.
