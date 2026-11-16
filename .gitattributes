@@ -1,0 +1,2 @@
+# Everything here runs on Linux (the Kindle, Docker): keep LF even on Windows.
+* text=auto eol=lf
