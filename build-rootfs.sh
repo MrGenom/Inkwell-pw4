@@ -17,8 +17,11 @@ MKE2FS=$(e2 mke2fs) DEBUGFS=$(e2 debugfs) E2FSCK=$(e2 e2fsck)
 TZ_NAME="${TZ_NAME:-UTC}"
 MIRROR=https://dl-cdn.alpinelinux.org/alpine/v3.24
 # mupdf-tools renders PDF and EPUB pages for Books and arXiv, and python3 runs
-# the code Quill writes in the terminal.
+# the code Quill writes in the terminal. The second line is tools for working
+# on the Kindle over SSH; openssh-sftp-server lets SFTP clients (WinSCP,
+# FileZilla, sshfs) talk to Dropbear.
 PKGS="dropbear dropbear-scp dropbear-dbclient busybox-extras wpa_supplicant tzdata curl mupdf-tools python3 python3-pyc"
+PKGS="$PKGS htop vim nano tmux git rsync openssh-sftp-server"
 
 ./build-ui.sh
 ./build-llm.sh >/dev/null
