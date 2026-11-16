@@ -69,7 +69,7 @@ fi
 chmod 700 "$S/root" "$S/root/.ssh"
 chmod 1777 "$S/tmp"
 cp fonts/*.ttf "$S/usr/share/fonts/inkwell/"
-BINS="home splash wifi settings notes sketch browser term books arxiv sshapp dashboard files tap"
+BINS="home splash wifi settings notes sketch browser term books arxiv sshapp dashboard files calc tap"
 [ "$NO_GAMES" = 1 ] || BINS="$BINS chess"
 [ "$NO_QUILL" = 1 ] || BINS="$BINS quill quill-code inkllm"
 for p in $BINS; do cp out/$p "$S/usr/local/bin/"; done

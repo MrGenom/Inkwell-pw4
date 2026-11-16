@@ -262,6 +262,16 @@ static void icon_folder(float cx, float cy, float s) {
     line(x + w * 0.12f, y + h * 0.3f, x + w * 0.88f, y + h * 0.3f, t * 0.6f, 0x60);
 }
 
+/* A pocket calculator: the body, its display and three rows of keys. */
+static void icon_calc(float cx, float cy, float s) {
+    float t = s * 0.06f, w = s * 0.56f, h = s * 0.78f, x = cx - w / 2, y = cy - h / 2;
+    rrect_line(x, y, w, h, s * 0.07f, t, BLACK);
+    rrect_fill(x + w * 0.18f, y + h * 0.13f, w * 0.64f, h * 0.17f, s * 0.02f, BLACK);
+    for (int r = 0; r < 3; r++)
+        for (int c = 0; c < 3; c++)
+            disc(x + w * (0.27f + 0.23f * c), y + h * (0.47f + 0.17f * r), s * 0.045f, r == 2 && c == 2 ? BLACK : 0x60);
+}
+
 static void icon(const char *name, float cx, float cy, float s) {
     if (!strcmp(name, "book")) icon_book(cx, cy, s);
     else if (!strcmp(name, "skull")) icon_skull(cx, cy, s);
@@ -279,6 +289,7 @@ static void icon(const char *name, float cx, float cy, float s) {
     else if (!strcmp(name, "key")) icon_key(cx, cy, s);
     else if (!strcmp(name, "calendar")) icon_calendar(cx, cy, s);
     else if (!strcmp(name, "folder")) icon_folder(cx, cy, s);
+    else if (!strcmp(name, "calc")) icon_calc(cx, cy, s);
     else icon_drop(cx, cy, s);
 }
 

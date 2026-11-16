@@ -1,4 +1,4 @@
-# Label|icon|command. Icons: quill book skull globe page pencil wifi cube crown gear drop terminal knight paper key calendar folder
+# Label|icon|command. Icons: quill book skull globe page pencil wifi cube crown gear drop terminal knight paper key calendar folder calc
 Quill|quill|/usr/local/bin/quill
 TriKing|crown|/usr/local/games/triking
 Browser|globe|/usr/local/bin/browser
@@ -9,4 +9,5 @@ Books|book|/usr/local/bin/books
 Dashboard|calendar|/usr/local/bin/dashboard
 arXiv|paper|/usr/local/bin/arxiv
 Terminal|terminal|/usr/local/bin/term
+Calculator|calc|/usr/local/bin/calc
 Chess|knight|/usr/local/bin/chess
