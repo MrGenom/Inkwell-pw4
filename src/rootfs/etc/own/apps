@@ -1,10 +1,11 @@
-# Label|icon|command. Icons: quill book skull globe page pencil wifi cube crown gear drop terminal knight paper key calendar
+# Label|icon|command. Icons: quill book skull globe page pencil wifi cube crown gear drop terminal knight paper key calendar folder
 SSH|key|/usr/local/bin/sshapp
 Quill|quill|/usr/local/bin/quill
 TriKing|crown|/usr/local/games/triking
 Browser|globe|/usr/local/bin/browser
 Sketch|pencil|/usr/local/bin/sketch
 Notes|page|/usr/local/bin/notes
+Files|folder|/usr/local/bin/files
 Books|book|/usr/local/bin/books
 Dashboard|calendar|/usr/local/bin/dashboard
 arXiv|paper|/usr/local/bin/arxiv

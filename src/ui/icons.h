@@ -254,6 +254,14 @@ static void weather_icon(const char *name, float cx, float cy, float s) {
     }
 }
 
+static void icon_folder(float cx, float cy, float s) {
+    float w = s * 0.78f, h = s * 0.56f, x = cx - w / 2, y = cy - h / 2 + s * 0.06f, t = s * 0.06f;
+    float tab[] = {x, y - s * 0.13f, x + w * 0.38f, y - s * 0.13f, x + w * 0.48f, y, x, y};
+    poly_fill(tab, 4, BLACK);
+    rrect_line(x, y, w, h, s * 0.05f, t, BLACK);
+    line(x + w * 0.12f, y + h * 0.3f, x + w * 0.88f, y + h * 0.3f, t * 0.6f, 0x60);
+}
+
 static void icon(const char *name, float cx, float cy, float s) {
     if (!strcmp(name, "book")) icon_book(cx, cy, s);
     else if (!strcmp(name, "skull")) icon_skull(cx, cy, s);
@@ -270,6 +278,7 @@ static void icon(const char *name, float cx, float cy, float s) {
     else if (!strcmp(name, "paper")) icon_paper(cx, cy, s);
     else if (!strcmp(name, "key")) icon_key(cx, cy, s);
     else if (!strcmp(name, "calendar")) icon_calendar(cx, cy, s);
+    else if (!strcmp(name, "folder")) icon_folder(cx, cy, s);
     else icon_drop(cx, cy, s);
 }
 

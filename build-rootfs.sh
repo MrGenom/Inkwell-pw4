@@ -54,7 +54,7 @@ fi
 chmod 700 "$S/root" "$S/root/.ssh"
 chmod 1777 "$S/tmp"
 cp fonts/*.ttf "$S/usr/share/fonts/inkwell/"
-for p in home splash wifi settings notes sketch browser term chess books arxiv sshapp dashboard quill quill-code inkllm tap; do cp out/$p "$S/usr/local/bin/"; done
+for p in home splash wifi settings notes sketch browser term chess books arxiv sshapp dashboard files quill quill-code inkllm tap; do cp out/$p "$S/usr/local/bin/"; done
 cp out/triking "$S/usr/local/games/"
 cp "$S/usr/share/zoneinfo/$TZ_NAME" "$S/etc/localtime"
 echo "$TZ_NAME" > "$S/etc/timezone"

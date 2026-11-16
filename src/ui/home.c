@@ -306,6 +306,11 @@ int main(int argc, char **argv) {
             launched = 1;
             int rc = run_app(&apps[i]);
             if (rc >= 10 && rc <= 12) return rc;
+            /* Reread the app list: an app may have changed it, and a later
+             * drag must not save a stale copy over it. */
+            napps = 0;
+            load_config();
+            layout();
             draw_home(0);
             break;
         }
