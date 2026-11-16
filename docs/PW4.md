@@ -16,6 +16,7 @@ jailbroken with SpiderCat.
 | **More tools in the image**: htop, vim, nano, tmux, git, rsync and an SFTP server (for WinSCP, FileZilla or sshfs). | `build-rootfs.sh` |
 | **No Doom and no Minecraft.** | `src/rootfs/etc/own/apps` |
 | **Wi-Fi and SSH live in Settings.** Their buttons at the top of Settings open the same apps, and closing them comes back to Settings; the home screen no longer has their icons. | `src/ui/settings.c`, `src/rootfs/etc/own/apps` |
+| **A pull-down shade on the home screen.** A swipe down from the top edge, or a tap on the status line, shows the Wi-Fi network and address, the battery, the frontlight slider (drag it) and a **Settings** button; a swipe up, a tap below it or the power button closes it. The slider and the Settings icon left the home screen for it. | `src/ui/home.c`, `src/rootfs/etc/own/apps` |
 | **Build fixes.** `release.sh` no longer copies an example config that was never committed (every release build failed on it), scripts keep LF line endings on Windows, and `tools/docker-build.sh` builds the release with Docker only. | `tools/`, `.gitattributes` |
 
 ## Build

@@ -42,7 +42,7 @@ These clips are from a real Kindle Paperwhite 3. Some are sped up, and each capt
 - **SSH** lets another computer on the same Wi-Fi log in to the Kindle. It shows the address and port to connect to, sets a password, and can keep SSH working while the Kindle sleeps. [SSH over Wi-Fi](#ssh-over-wi-fi) has the details.
 - **Settings** restarts or powers off the Kindle, opens the normal Kindle UI once, draws the battery over the last day, and shows memory and storage.
 
-The home screen also has a clock, the date, the battery and a frontlight slider. To move an app, drag it onto another place. The Kindle sleeps after 15 minutes without a touch in any app, or when you press the power button on the home screen or in Books, and it shows a night sky while it sleeps. When it wakes, the app is just as you left it. With Wi-Fi on, the clock sets itself from the network.
+The home screen also has a clock, the date and the battery. A swipe down from the top edge, or a tap on the status line, pulls down a shade with the Wi-Fi network, the battery, the frontlight slider and **Settings**; a swipe up or a tap below it closes it. To move an app, drag it onto another place. The Kindle sleeps after 15 minutes without a touch in any app, or when you press the power button on the home screen or in Books, and it shows a night sky while it sleeps. When it wakes, the app is just as you left it. With Wi-Fi on, the clock sets itself from the network.
 
 | Books | arXiv | PDF in Columns mode |
 | :---: | :---: | :---: |
@@ -126,7 +126,7 @@ Password logins are off on the USB link, and the release image carries no keys, 
 
 **SSH**, under Settings, runs a second SSH server, on port 2022, that other computers on your Wi-Fi network can reach. It is off until you turn it on.
 
-1. Join a network under Settings, Wi-Fi.
+1. Join a network in Settings (from the shade), Wi-Fi.
 2. Open Settings, then SSH, and tap **Set a password**. It needs at least 8 characters, and it shows as you type it.
 3. Tap **Turn on**. The app shows the Kindle's Wi-Fi address and the command to type, for example `ssh -p 2022 root@192.168.1.42`.
 
