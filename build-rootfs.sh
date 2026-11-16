@@ -21,7 +21,6 @@ MIRROR=https://dl-cdn.alpinelinux.org/alpine/v3.24
 PKGS="dropbear dropbear-scp dropbear-dbclient busybox-extras wpa_supplicant tzdata curl mupdf-tools python3 python3-pyc"
 
 ./build-ui.sh
-./build-doom.sh >/dev/null
 ./build-llm.sh >/dev/null
 
 rm -rf "$S" "$IMG"
@@ -55,10 +54,8 @@ fi
 chmod 700 "$S/root" "$S/root/.ssh"
 chmod 1777 "$S/tmp"
 cp fonts/*.ttf "$S/usr/share/fonts/inkwell/"
-for p in home splash wifi settings notes sketch browser term chess books arxiv sshapp dashboard doom quill quill-code inkllm tap; do cp out/$p "$S/usr/local/bin/"; done
-cp out/rd-kindle out/triking "$S/usr/local/games/"
-mkdir -p "$S/usr/local/share/doom"
-cp downloads/doom/doom1.wad "$S/usr/local/share/doom/" # the shareware episode, free to share
+for p in home splash wifi settings notes sketch browser term chess books arxiv sshapp dashboard quill quill-code inkllm tap; do cp out/$p "$S/usr/local/bin/"; done
+cp out/triking "$S/usr/local/games/"
 cp "$S/usr/share/zoneinfo/$TZ_NAME" "$S/etc/localtime"
 echo "$TZ_NAME" > "$S/etc/timezone"
 ln -sf /usr/local/bin/kindle "$S/usr/bin/kindle"

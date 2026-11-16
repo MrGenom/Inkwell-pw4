@@ -1,8 +1,7 @@
 # Label|icon|command. Icons: quill book skull globe page pencil wifi cube crown gear drop terminal knight paper key calendar
+SSH|key|/usr/local/bin/sshapp
 Quill|quill|/usr/local/bin/quill
-Minecraft|cube|/usr/local/games/rd-kindle
 TriKing|crown|/usr/local/games/triking
-Doom|skull|/usr/local/bin/doom
 Browser|globe|/usr/local/bin/browser
 Sketch|pencil|/usr/local/bin/sketch
 Notes|page|/usr/local/bin/notes
@@ -12,5 +11,4 @@ arXiv|paper|/usr/local/bin/arxiv
 Terminal|terminal|/usr/local/bin/term
 Chess|knight|/usr/local/bin/chess
 Wi-Fi|wifi|/usr/local/bin/wifi
-SSH|key|/usr/local/bin/sshapp
 Settings|gear|/usr/local/bin/settings
