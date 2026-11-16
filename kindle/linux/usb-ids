@@ -1,0 +1,11 @@
+# The USB IDs Inkwell's network link shows the computer, as VENDOR:PRODUCT
+# in hex. Read at boot by linux/boot.sh.
+#
+# 04E8:6881 is a Samsung RNDIS ID. Windows 11 (24H2 and later) binds a COM
+# port driver to the stock IDs (0525:A4A2) and hides its own RNDIS driver,
+# so the Kindle never shows up as a network adapter. With this ID, Samsung's
+# signed RNDIS driver (part of "Samsung USB Driver for Mobile Phones") binds
+# on its own. Linux and macOS pick their driver by class and work either way.
+#
+# Delete this file, or put a # in front of the line below, for the stock IDs.
+04E8:6881
