@@ -121,6 +121,10 @@ bat_status() {
         mv /mnt/us/linux/BOOT_OWN.trying /mnt/us/linux/BOOT_OWN && sync
 ) &
 
+# Local add-ons: every executable in /etc/own/rc.d runs in the background,
+# its output going to /var/log/own-rc.log.
+for s in /etc/own/rc.d/*; do [ -x "$s" ] && "$s" >>/var/log/own-rc.log 2>&1 & done
+
 crashes=0
 while :; do
     started=$(date +%s)

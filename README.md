@@ -2,25 +2,27 @@
 
 This is a fork of [Inkwell](https://github.com/pragyaangaur/Inkwell) by Pragyaan Gaur, modified by Pietro Boccaletto to also run on the **Kindle Paperwhite 4**. The original runs on the Paperwhite 3, and this fork keeps it working there. [The Paperwhite 4 port](#the-paperwhite-4-port) lists what changed.
 
+**This branch** adds a file manager, USB networking on Windows 11, a Wi-Fi fix after sleep, more command-line tools and a Docker build, and drops Doom and Minecraft. See [docs/PW4.md](docs/PW4.md).
+
 Featured on Hackaday: [It's Alpine Linux, On A Kindle Paperwhite 3](https://hackaday.com/2026/11/06/its-alpine-linux-on-a-kindle-paperwhite-3/) (6 November 2026).
 
 Inkwell is a small Linux system of its own for the jailbroken Kindle Paperwhite 3 and Paperwhite 4. Amazon's bootloader and kernel still start the device, and everything after that is replaced: the home screen, the apps, Wi-Fi, USB networking and SSH all come from an Alpine Linux userspace built for the e-ink panel.
 
-It has a chatbot called Quill that runs a language model on the Kindle itself with no internet, and in the terminal Quill writes and runs code. It reads EPUB and PDF books, keeps arXiv papers for reading offline, and plays Doom, chess and the first version of Minecraft. It also has a reading web browser, notes, a sketchpad and a falling-block game called TriKing. You install it by copying one folder to the Kindle and tapping one item in the library, and one more tap brings the normal Kindle back.
+It has a chatbot called Quill that runs a language model on the Kindle itself with no internet, and in the terminal Quill writes and runs code. It reads EPUB and PDF books, keeps arXiv papers for reading offline, and plays chess. It also has a reading web browser, notes, a sketchpad and a falling-block game called TriKing. You install it by copying one folder to the Kindle and tapping one item in the library, and one more tap brings the normal Kindle back.
 
 <p align="center"><img src="docs/images/home.png" width="380" alt="The Inkwell home screen with a serif clock, thirteen app icons and a frontlight slider"></p>
 
 These clips are from a real Kindle Paperwhite 3. Some are sped up, and each caption says by how much.
 
-| Quill | Doom | Minecraft |
-| :---: | :---: | :---: |
-| <img src="docs/clips/quill.gif" width="260" alt="Quill writing an answer to who are you, word by word"> | <img src="docs/clips/doom.gif" width="260" alt="Doom being played with the on-screen d-pad and Fire button"> | <img src="docs/clips/minecraft.gif" width="260" alt="Walking and building in Minecraft on the e-ink screen"> |
-| An AI chatbot that runs offline (4x speed) | The shareware episode with touch controls (1.25x) | rd-132211, dithered for e-ink (1.15x) |
+| Quill | Waking up |
+| :---: | :---: |
+| <img src="docs/clips/quill.gif" width="260" alt="Quill writing an answer to who are you, word by word"> | <img src="docs/clips/wake.gif" width="260" alt="The Kindle waking from the night-sky sleep screen to the home screen"> |
+| An AI chatbot that runs offline (4x speed) | From the sleep screen to home (real time) |
 
-| Waking up | Browser | Sketch |
-| :---: | :---: | :---: |
-| <img src="docs/clips/wake.gif" width="260" alt="The Kindle waking from the night-sky sleep screen to the home screen"> | <img src="docs/clips/browser.gif" width="260" alt="Turning the pages of a GitHub profile in the browser"> | <img src="docs/clips/sketch.gif" width="260" alt="Drawing a figure with a finger and saving it"> |
-| From the sleep screen to home (real time) | GitHub, in pages you turn (1.5x) | Drawing with a finger (3x) |
+| Browser | Sketch |
+| :---: | :---: |
+| <img src="docs/clips/browser.gif" width="260" alt="Turning the pages of a GitHub profile in the browser"> | <img src="docs/clips/sketch.gif" width="260" alt="Drawing a figure with a finger and saving it"> |
+| GitHub, in pages you turn (1.5x) | Drawing with a finger (3x) |
 
 ## What is on it
 
@@ -29,8 +31,6 @@ These clips are from a real Kindle Paperwhite 3. Some are sped up, and each capt
 - **Comics.** Books also opens CBZ and CBT comics. They open in a Panels view: each page is shown whole, then panel by panel, each zoomed to fill the screen, in reading order. Inkwell finds the panels itself from the gutters between them, white or black. **Whole page** in the menu turns it off for that comic, and greys are dithered so shading doesn't come out in bands.
 - **Dashboard** is a page to leave on: a clock, the weather now and for the next days, your calendars, and lines and buttons from a small server on your computer, such as its load or a button that locks its screen. While it is open the Kindle doesn't go to sleep by itself, so it keeps itself up to date. It can also be the sleep screen. [The Dashboard](#the-dashboard) explains how to set it up.
 - **arXiv** fetches a paper by its number, such as `1706.03762`, and shows its title, authors and abstract. **Save offline** downloads the PDF to the `arxiv` folder and opens it in Books, and saved papers stay listed for reading without Wi-Fi.
-- **Doom** is the original shareware episode. The game is drawn into the top of the screen, dithered to black and white so each frame can use the fastest refresh, and played with an on-screen d-pad, Fire and Use buttons.
-- **Minecraft** is rd-132211, the first version of Minecraft from 2009, through [rdgeneric](https://github.com/pragyaangaur/Can-It-Run-Minecraft). You can walk, dig and place blocks.
 - **TriKing** is a falling-block game where every piece has three cells. You tap the board to rotate, drag to move and flick down to drop.
 - **Browser** fetches a page, keeps the headings, paragraphs and links, and lays them out as pages you turn. It searches with Bing.
 - **Chess** plays against Inkwell's own engine, a small alpha-beta search written for this processor. Easy answers at once, Medium thinks for up to two seconds and Hard for up to six. You can play either colour and take moves back, and the game is saved to the `chess` folder, so you can carry on later.
@@ -42,7 +42,7 @@ These clips are from a real Kindle Paperwhite 3. Some are sped up, and each capt
 - **SSH** lets another computer on the same Wi-Fi log in to the Kindle. It shows the address and port to connect to, sets a password, and can keep SSH working while the Kindle sleeps. [SSH over Wi-Fi](#ssh-over-wi-fi) has the details.
 - **Settings** restarts or powers off the Kindle, opens the normal Kindle UI once, draws the battery over the last day, and shows memory and storage.
 
-The home screen also has a clock, the date, the battery and a frontlight slider. To move an app, drag it onto another place. The Kindle sleeps after 15 minutes without a touch in any app, or when you press the power button on the home screen or in Books, and it shows a night sky while it sleeps. When it wakes, the app is just as you left it. With Wi-Fi on, the clock sets itself from the network.
+The home screen also has a clock, the date and the battery. A swipe down from the top edge, or a tap on the status line, pulls down a shade with the Wi-Fi network, the battery, the frontlight slider and **Settings**; a swipe up or a tap below it closes it. To move an app, drag it onto another place. The Kindle sleeps after 15 minutes without a touch in any app, or when you press the power button on the home screen or in Books, and it shows a night sky while it sleeps. When it wakes, the app is just as you left it. With Wi-Fi on, the clock sets itself from the network.
 
 | Books | arXiv | PDF in Columns mode |
 | :---: | :---: | :---: |
@@ -70,9 +70,9 @@ The Kindle reboots, shows the Inkwell splash for a moment and opens the home scr
 
 ## Use
 
-Tap an app to open it, and tap the round arrow in the top left corner to go back. In Quill and the three games the power button also goes back to the home screen. On the home screen the power button puts the Kindle to sleep, and pressing it again wakes it.
+Tap an app to open it, and tap the round arrow in the top left corner to go back. In Quill and TriKing the power button also goes back to the home screen. On the home screen the power button puts the Kindle to sleep, and pressing it again wakes it.
 
-**Wi-Fi.** Open Wi-Fi, tap **Scan**, tap your network and type its password. Inkwell remembers it in `linux/wifi.conf` and joins it at every boot. Wi-Fi is needed for the browser, arXiv, `getmodel` and setting the clock.
+**Wi-Fi.** Open Settings, then **Wi-Fi**, tap **Scan**, tap your network and type its password. Inkwell remembers it in `linux/wifi.conf` and joins it at every boot. Wi-Fi is needed for the browser, arXiv, `getmodel` and setting the clock.
 
 **The smart model.** Quill comes with the quick model (135 million parameters). The smart model, SmolLM2 360M, knows more and writes about 0.7 words per second. With Wi-Fi on, open Terminal and type `getmodel smart`. It downloads the model from [Hugging Face](https://huggingface.co/bartowski/SmolLM2-360M-Instruct-GGUF) (220 MB), checks it and puts it in `linux/models`, and the **quick** button in Quill then switches between the two. The first chat with each model takes a little longer while Quill prepares it.
 
@@ -84,7 +84,7 @@ Tap an app to open it, and tap the round arrow in the top left corner to go back
 
 **SSH to your computer.** On a Mac, turn on Remote Login in System Settings, under General and then Sharing. In the Terminal app, `ssh yourname@192.168.15.201` then connects to the Mac over the USB cable. The address is the one Inkwell hands the computer, and Linux computers work the same way with their SSH server running.
 
-**Your files.** Notes are in `notes`, sketches are in `sketches`, arXiv papers are in `arxiv`, chess games are in `chess` and Doom saves are in `doom` on the Kindle's drive. While Inkwell runs, the USB port is a network link, so to reach the drive you open the normal Kindle UI once (below) and plug in the cable. With SSH over Wi-Fi on, `scp -P 2022 book.epub root@<address>:/mnt/us/documents/` copies a file to the drive without leaving Inkwell.
+**Your files.** Notes are in `notes`, sketches are in `sketches`, arXiv papers are in `arxiv` and chess games are in `chess` on the Kindle's drive. While Inkwell runs, the USB port is a network link, so to reach the drive you open the normal Kindle UI once (below) and plug in the cable. With SSH over Wi-Fi on, `scp -P 2022 book.epub root@<address>:/mnt/us/documents/` copies a file to the drive without leaving Inkwell.
 
 ## The Dashboard
 
@@ -124,10 +124,10 @@ Password logins are off on the USB link, and the release image carries no keys, 
 
 ### SSH over Wi-Fi
 
-The **SSH** app runs a second SSH server, on port 2022, that other computers on your Wi-Fi network can reach. It is off until you turn it on.
+**SSH**, under Settings, runs a second SSH server, on port 2022, that other computers on your Wi-Fi network can reach. It is off until you turn it on.
 
-1. Join a network in the Wi-Fi app.
-2. Open SSH and tap **Set a password**. It needs at least 8 characters, and it shows as you type it.
+1. Join a network in Settings (from the shade), Wi-Fi.
+2. Open Settings, then SSH, and tap **Set a password**. It needs at least 8 characters, and it shows as you type it.
 3. Tap **Turn on**. The app shows the Kindle's Wi-Fi address and the command to type, for example `ssh -p 2022 root@192.168.1.42`.
 
 This server accepts the password and also the keys in `linux/authorized_keys`. Only a hash of the password is saved, in `linux/ssh-password` on the drive, and **Remove password** deletes it and leaves keys as the only way in. Anyone on the same network can try passwords, so pick a long one, or use a key and remove the password. SSH stays on across reboots until you turn it off.
@@ -184,7 +184,7 @@ The Paperwhite 4 has the same 1072x1448 screen as the Paperwhite 3, but almost e
 
   | Waveform | Time | Use |
   | --- | --- | --- |
-  | A2 | 190 ms | black and white only: typing, Doom, Minecraft |
+  | A2 | 190 ms | black and white only: typing, TriKing |
   | DU | 380 ms | TriKing |
   | GC16, GL16 | 660 ms | page changes with grey |
 
@@ -216,15 +216,13 @@ tools/fetch.sh
 ./build-rootfs.sh
 ```
 
-`tools/fetch.sh` downloads the Alpine minirootfs and packages, a sysroot made from Alpine's musl and libc++ packages, llama.cpp v0.7.0, the shareware Doom WAD and the three models into `downloads/`. `./build-rootfs.sh` compiles everything and writes `out/alpine.img`, and `tools/release.sh 1.1.0` builds the release zip in `dist/`. Set `TZ_NAME` to change the image's default time zone. If `keys/` holds a key from `./ssh.sh`, the image you build includes it.
+`tools/fetch.sh` downloads the Alpine minirootfs and packages, a sysroot made from Alpine's musl and libc++ packages, llama.cpp v0.7.0 and the three models into `downloads/`. `./build-rootfs.sh` compiles everything and writes `out/alpine.img`, and `tools/release.sh 1.1.0` builds the release zip in `dist/`. Set `TZ_NAME` to change the image's default time zone. If `keys/` holds a key from `./ssh.sh`, the image you build includes it.
 
 | Path | What it holds |
 | --- | --- |
 | `src/ui/` | The home screen, the apps and the shared e-ink, drawing and UI headers |
 | `src/chat/` | Quill and `inkllm`, the llama.cpp runner |
-| `src/doom/` | doomgeneric and `doomgeneric_kindle.c`, the Kindle port |
-| `src/minecraft.c`, `src/triking.c`, `src/kio.h` | The two games, freestanding with raw syscalls |
-| `src/rd/` | rdgeneric, the Minecraft rd-132211 core |
+| `src/triking.c`, `src/kio.h` | TriKing, freestanding with raw syscalls |
 | `src/linux/` | The upstart job, `boot.sh` and the boot splash |
 | `src/rootfs/` | Files laid over Alpine: `own-init`, the app list, Quill's system prompt, `dashboard-fetch` |
 | `kindle/documents/` | The library scriptlets that install, start, stop and uninstall |
@@ -237,8 +235,8 @@ GitHub Actions builds the release on every push to `main` (`.github/workflows/bu
 
 Inkwell was created by [Pragyaan Gaur](https://github.com/pragyaangaur/Inkwell). The Paperwhite 4 port is by Pietro Boccaletto.
 
-Inkwell stands on a lot of other people's work: [Alpine Linux](https://alpinelinux.org), [llama.cpp](https://github.com/ggml-org/llama.cpp), [SmolLM2](https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct) from Hugging Face (Q4_0 files by [bartowski](https://huggingface.co/bartowski)), [doomgeneric](https://github.com/ozkl/doomgeneric), id Software's Doom and its shareware episode, [stb_truetype](https://github.com/nothings/stb), the Inter, Cormorant Garamond, Caveat and JetBrains Mono typefaces, the chess symbols from DejaVu Sans, and the Kindle jailbreak community at [kindlemodding.org](https://kindlemodding.org). The jailbreak itself comes from that community, and Inkwell only starts where it ends.
+Inkwell stands on a lot of other people's work: [Alpine Linux](https://alpinelinux.org), [llama.cpp](https://github.com/ggml-org/llama.cpp), [SmolLM2](https://huggingface.co/HuggingFaceTB/SmolLM2-135M-Instruct) from Hugging Face (Q4_0 files by [bartowski](https://huggingface.co/bartowski)), [stb_truetype](https://github.com/nothings/stb), the Inter, Cormorant Garamond, Caveat and JetBrains Mono typefaces, the chess symbols from DejaVu Sans, and the Kindle jailbreak community at [kindlemodding.org](https://kindlemodding.org). The jailbreak itself comes from that community, and Inkwell only starts where it ends.
 
 ## Licence
 
-Inkwell's own code is under the MIT licence in `LICENSE`. The Doom port in `src/doom/` is under the GNU GPL version 2, like the Doom source it comes from. The fonts are under the SIL Open Font License, except the DejaVu chess symbols, which are under the Bitstream Vera licence. Each licence is in `fonts/`. The release image also contains Alpine's packages under their own licences.
+Inkwell's own code is under the MIT licence in `LICENSE`. The fonts are under the SIL Open Font License, except the DejaVu chess symbols, which are under the Bitstream Vera licence. Each licence is in `fonts/`. The release image also contains Alpine's packages under their own licences.

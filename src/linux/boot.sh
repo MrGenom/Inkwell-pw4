@@ -93,11 +93,22 @@ wifi_driver() {
     fi
 }
 
+# The USB IDs the network gadget shows the computer, from linux/usb-ids
+# ("VENDOR:PRODUCT" in hex; lines starting with # are skipped). Without the
+# file the gadget keeps its stock IDs. Windows 11 binds a COM port driver to
+# the stock IDs, and a Samsung RNDIS ID (04E8:6881) gets a network adapter.
+usb_ids() {
+    [ -f "$D/usb-ids" ] || return 0
+    sed -n 's/^[[:space:]]*\([0-9A-Fa-f]\{4\}\):\([0-9A-Fa-f]\{4\}\)[[:space:]]*$/idVendor=0x\1 idProduct=0x\2/p' "$D/usb-ids" | head -n 1
+}
+
 # The USB port becomes a network link instead of a drive, and the Wi-Fi chip
 # is ours. The drivers load while the splash waits, which saves a second or two.
 (
     [ -n "$USB_DRIVE" ] && rmmod "$USB_DRIVE"
-    modprobe g_ether
+    ids=$(usb_ids)
+    echo "g_ether ${ids:-with stock IDs}"
+    modprobe g_ether $ids
     wifi_driver
 ) &
 drivers=$!

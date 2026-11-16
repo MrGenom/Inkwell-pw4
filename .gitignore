@@ -9,8 +9,8 @@ keys/
 # Copies the build makes, and stock-mode leftovers
 kindle/linux/*
 !kindle/linux/wifi.conf.example
+!kindle/linux/usb-ids
 kindle/kapps/
-kindle/documents/Minecraft.sh
 kindle/documents/TriKing.sh
 
 # Notes for the author's own tools, and retired code

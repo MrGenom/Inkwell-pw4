@@ -1,9 +1,11 @@
-/* home: Inkwell's home screen. A serif clock and date, the apps listed in
- * /etc/own/apps (one "Label|icon|command" per line) as line-art icons, a
- * frontlight slider. The sleep screen lives in sleep.h. An app that exits
- * 10, 11 or 12 (Settings does) asks own-init for the stock Kindle UI, a
- * reboot or power off, so home exits with that code. Dragging an app onto
- * another place moves it there, and the order is saved to /etc/own/apps. */
+/* home: Inkwell's home screen. A serif clock and date and the apps listed in
+ * /etc/own/apps (one "Label|icon|command" per line) as line-art icons. A
+ * swipe down from the top edge, or a tap on the status line, pulls down a
+ * shade with Wi-Fi and battery, the frontlight slider and Settings. The
+ * sleep screen lives in sleep.h. An app that exits 10, 11 or 12 (Settings
+ * does) asks own-init for the stock Kindle UI, a reboot or power off, so home
+ * exits with that code. Dragging an app onto another place moves it there,
+ * and the order is saved to /etc/own/apps. */
 #include "ui.h"
 #include <signal.h>
 #include <time.h>
@@ -85,8 +87,12 @@ static void save_config(void) {
 #define CELL_H 250
 #define GRID_BOTTOM 1262
 static int cell_h = CELL_H;
-#define SLIDER_Y 1290
+/* the shade */
+#define SHADE_H 600
+#define SHADE_ROW_Y 120
+#define SLIDER_Y 300
 #define SLIDER_H 70
+#define SETTINGS_PATH "/usr/local/bin/settings"
 
 static rect slider_r;
 static int slider_x0, slider_x1;
@@ -103,6 +109,8 @@ static void layout(void) {
     slider_x1 = W - MARGIN - 130;
     slider_r = (rect){MARGIN, SLIDER_Y - 20, W - 2 * MARGIN, SLIDER_H + 40};
 }
+
+static rect settings_r(void) { return (rect){MARGIN, 420, W - 2 * MARGIN, 100}; }
 
 /* ---- drawing ------------------------------------------------------------------ */
 
@@ -165,6 +173,8 @@ static void draw_app(const app *a) {
     text_center(&f_ui_bold, k < 1 ? 28 : 32, cx, a->r.y + (int)(186 * k) - (k < 1 ? 4 : 0), a->label, BLACK);
 }
 
+static void set_light_from(int x);
+
 static int light_level(void) {
     int b = read_int(LIGHT_FILE("brightness")), m = read_int(LIGHT_FILE("max_brightness"));
     if (m <= 0 || b <= 0) return 0;
@@ -198,13 +208,88 @@ static const char *const footers[] = {
 static void draw_home(int flash) {
     fill(0, 0, W, H, WHITE);
     draw_status();
+    rrect_fill(W / 2 - 40, 8, 80, 8, 4, 0xA0); /* a grip: the shade pulls down from here */
     draw_clock();
     ornament(RULE_Y);
     for (int i = 0; i < napps; i++) draw_app(&apps[i]);
-    draw_slider();
     time_t now = time(0);
     text_center(&f_hand, 46, W / 2, H - 82, footers[(now / 86400) % (sizeof footers / sizeof *footers)], 0x50);
     if (flash) flip_flash(); else flip();
+}
+
+/* ---- the shade ---------------------------------------------------------------- */
+
+/* The network wlan0 is on, from wpa_cli; empty if it can't tell. */
+static void wifi_ssid(char *out, int n) {
+    char line[160];
+    out[0] = 0;
+    FILE *p = popen("wpa_cli -p /run/wpa_supplicant -i wlan0 status 2>/dev/null", "r");
+    while (p && fgets(line, sizeof line, p))
+        if (!strncmp(line, "ssid=", 5)) { line[strcspn(line, "\n")] = 0; snprintf(out, n, "%s", line + 5); }
+    if (p) pclose(p);
+}
+
+static void shade_row(int y, const char *k, const char *v) {
+    char fit[160];
+    text(&f_ui, 32, MARGIN, y, k, 0x60);
+    text_fit(&f_ui_bold, 32, v, W - 2 * MARGIN - 200, fit, sizeof fit);
+    text_right(&f_ui_bold, 32, W - MARGIN, y, fit, BLACK);
+}
+
+static void draw_shade(void) {
+    char buf[160], ssid[96], ip[32], st[32];
+    fill(0, 0, W, SHADE_H, WHITE);
+    draw_status();
+    if (ip_of("wlan0", ip) == 0) {
+        wifi_ssid(ssid, sizeof ssid);
+        snprintf(buf, sizeof buf, "%s  %s", ssid[0] ? ssid : "Connected", ip);
+    } else if (access("/mnt/us/linux/wifi.off", F_OK) == 0) snprintf(buf, sizeof buf, "Off");
+    else snprintf(buf, sizeof buf, "Not connected");
+    shade_row(SHADE_ROW_Y, "Wi-Fi", buf);
+    battery_status(st, sizeof st);
+    snprintf(buf, sizeof buf, "%d%%, %s", read_int(BATTERY_FILE("capacity")), st);
+    shade_row(SHADE_ROW_Y + 70, "Battery", buf);
+    draw_slider();
+    pill(settings_r(), "Settings  ›", 0);
+    fill(0, SHADE_H - 4, W, 4, BLACK);
+    rrect_fill(W / 2 - 40, SHADE_H - 26, 80, 8, 4, 0xA0);
+}
+
+enum { SHADE_CLOSED, SHADE_SETTINGS, SHADE_POWER };
+
+/* Pulls the shade down and runs it until it is closed: a swipe up, a tap
+ * below it or the power button, or the Settings button. */
+static int pull_shade(void) {
+    draw_shade();
+    refresh(0, 0, W, SHADE_H, WF_GL16, 0, 0);
+    int sliding = 0;
+    for (;;) {
+        event e = input_wait(60000);
+        if (e.type == EV_NONE) { draw_shade(); refresh(0, 0, W, SHADE_H, WF_GL16, 0, 0); continue; }
+        if (e.type == EV_POWER) return SHADE_POWER;
+        if (e.type == EV_DOWN) {
+            sliding = hit(slider_r, e.x, e.y);
+            if (sliding) { set_light_from(e.x); draw_slider(); refresh(slider_r.x, slider_r.y, slider_r.w, slider_r.h, WF_A2, 0, 0); }
+            else if (hit(settings_r(), e.x, e.y)) press_on(settings_r());
+            continue;
+        }
+        if (e.type == EV_MOVE) {
+            if (sliding) { set_light_from(e.x); draw_slider(); refresh(slider_r.x, slider_r.y, slider_r.w, slider_r.h, WF_A2, 0, 0); }
+            continue;
+        }
+        if (e.type != EV_TAP) continue;
+        if (sliding) {
+            sliding = 0;
+            set_light_from(e.ux);
+            draw_slider();
+            refresh(slider_r.x, slider_r.y, slider_r.w, slider_r.h, WF_GL16, 0, 0);
+            continue;
+        }
+        press_forget();
+        if (e.uy - e.y < -120 || e.y > SHADE_H) return SHADE_CLOSED;
+        if (hit(settings_r(), e.x, e.y) && hit(settings_r(), e.ux, e.uy)) return SHADE_SETTINGS;
+        press_off();
+    }
 }
 
 /* ---- actions ----------------------------------------------------------------------- */
@@ -267,7 +352,6 @@ int main(int argc, char **argv) {
         }
         if (e.type == EV_DOWN) {
             drag = over = -1;
-            if (hit(slider_r, e.x, e.y)) { set_light_from(e.x); draw_slider(); refresh(slider_r.x, slider_r.y, slider_r.w, slider_r.h, WF_A2, 0, 0); continue; }
             drag = app_at(e.x, e.y);
             for (int i = 0; i < napps; i++)
                 if (hit(apps[i].r, e.x, e.y)) {
@@ -278,10 +362,21 @@ int main(int argc, char **argv) {
             continue;
         }
         if (e.type != EV_TAP) continue;
-        if (hit(slider_r, e.x, e.y)) {
-            set_light_from(e.ux);
-            draw_slider();
-            refresh(slider_r.x, slider_r.y, slider_r.w, slider_r.h, WF_GL16, 0, 0);
+        /* a swipe down from the top edge, or a tap on the status line: the shade */
+        if ((e.y < 160 && e.uy - e.y > 150) || (e.y < 100 && e.uy < 100 && abs(e.ux - e.x) < 40)) {
+            press_forget();
+            drag = over = -1;
+            int act = pull_shade();
+            if (act == SHADE_POWER) { sleep_now(); draw_home(1); continue; }
+            if (act == SHADE_SETTINGS) {
+                app st = {"Settings", "gear", SETTINGS_PATH, {0, 0, 0, 0}};
+                int rc = run_app(&st);
+                if (rc >= 10 && rc <= 12) return rc;
+                napps = 0;
+                load_config();
+                layout();
+            }
+            draw_home(0);
             continue;
         }
         /* lifted on another place, well away from where it landed: a move */
@@ -306,6 +401,11 @@ int main(int argc, char **argv) {
             launched = 1;
             int rc = run_app(&apps[i]);
             if (rc >= 10 && rc <= 12) return rc;
+            /* Reread the app list: an app may have changed it, and a later
+             * drag must not save a stale copy over it. */
+            napps = 0;
+            load_config();
+            layout();
             draw_home(0);
             break;
         }

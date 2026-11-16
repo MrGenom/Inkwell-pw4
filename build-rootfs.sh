@@ -17,11 +17,13 @@ MKE2FS=$(e2 mke2fs) DEBUGFS=$(e2 debugfs) E2FSCK=$(e2 e2fsck)
 TZ_NAME="${TZ_NAME:-UTC}"
 MIRROR=https://dl-cdn.alpinelinux.org/alpine/v3.24
 # mupdf-tools renders PDF and EPUB pages for Books and arXiv, and python3 runs
-# the code Quill writes in the terminal.
+# the code Quill writes in the terminal. The second line is tools for working
+# on the Kindle over SSH; openssh-sftp-server lets SFTP clients (WinSCP,
+# FileZilla, sshfs) talk to Dropbear.
 PKGS="dropbear dropbear-scp dropbear-dbclient busybox-extras wpa_supplicant tzdata curl mupdf-tools python3 python3-pyc"
+PKGS="$PKGS htop vim nano tmux git rsync openssh-sftp-server"
 
 ./build-ui.sh
-./build-doom.sh >/dev/null
 ./build-llm.sh >/dev/null
 
 rm -rf "$S" "$IMG"
@@ -42,6 +44,7 @@ for rp in $(python3 tools/apkdeps.py downloads/APKINDEX.main,downloads/APKINDEX.
 done
 
 cp -R src/rootfs/. "$S/" # "dir/." copies the contents with both BSD and GNU cp
+chmod 755 "$S"/etc/own/rc.d/* # checkouts on Windows don't keep the exec bit
 mkdir -p "$S/root/.ssh" "$S/etc/dropbear" "$S/usr/share/fonts/inkwell" "$S/usr/local/games"
 # Your own SSH key (made by ./ssh.sh) and a fixed host key, so rebuilding the
 # image doesn't trip SSH's host key check. Release images set NO_KEYS=1 and
@@ -54,10 +57,8 @@ fi
 chmod 700 "$S/root" "$S/root/.ssh"
 chmod 1777 "$S/tmp"
 cp fonts/*.ttf "$S/usr/share/fonts/inkwell/"
-for p in home splash wifi settings notes sketch browser term chess books arxiv sshapp dashboard doom quill quill-code inkllm tap; do cp out/$p "$S/usr/local/bin/"; done
-cp out/rd-kindle out/triking "$S/usr/local/games/"
-mkdir -p "$S/usr/local/share/doom"
-cp downloads/doom/doom1.wad "$S/usr/local/share/doom/" # the shareware episode, free to share
+for p in home splash wifi settings notes sketch browser term chess books arxiv sshapp dashboard files quill quill-code inkllm tap; do cp out/$p "$S/usr/local/bin/"; done
+cp out/triking "$S/usr/local/games/"
 cp "$S/usr/share/zoneinfo/$TZ_NAME" "$S/etc/localtime"
 echo "$TZ_NAME" > "$S/etc/timezone"
 ln -sf /usr/local/bin/kindle "$S/usr/bin/kindle"

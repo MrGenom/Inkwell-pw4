@@ -1,11 +1,14 @@
-/* settings: restart, power off, the stock Kindle UI, a graph of the battery
- * over the last day (own-init logs it every ten minutes), and an About card
- * with what the device is doing. Exits 10, 11 or 12 to ask home (and through it
- * own-init) for the Kindle UI, a reboot or power off. */
+/* settings: Wi-Fi and SSH (the wifi and sshapp apps, opened from here and
+ * back here when they close), restart, power off, the stock Kindle UI, a
+ * graph of the battery over the last day (own-init logs it every ten
+ * minutes), and an About card with what the device is doing. Exits 10, 11 or
+ * 12 to ask home (and through it own-init) for the Kindle UI, a reboot or
+ * power off. */
 #include "ui.h"
 #include <sys/statvfs.h>
 #include <sys/sysinfo.h>
 #include <sys/utsname.h>
+#include <sys/wait.h>
 #include <time.h>
 
 #define BATTERY_LOG "/mnt/us/linux/battery.log"
@@ -17,7 +20,20 @@ static void read_str(const char *path, char *out, int n) {
     if (f) { if (fgets(out, n, f)) out[strcspn(out, "\n")] = 0; fclose(f); }
 }
 
-static rect restart_btn, off_btn, kindle_btn;
+static rect wifi_btn, ssh_btn, restart_btn, off_btn, kindle_btn;
+
+/* Runs another app full screen and waits for it to close. */
+static void run(const char *prog) {
+    wait_last_update(); /* the pressed button reaches the panel first */
+    pid_t pid = fork();
+    if (pid == 0) {
+        execl(prog, strrchr(prog, '/') + 1, (char *)0);
+        _exit(127);
+    }
+    if (pid > 0) waitpid(pid, 0, 0);
+    input_drain();
+    screen_taken_back();
+}
 
 static void about_row(int *y, const char *k, const char *v) {
     char fit[120];
@@ -78,15 +94,19 @@ static void draw(void) {
     char buf[160], a[64], b[64];
     header("Settings");
     int bw = (W - 2 * MARGIN - 40) / 2;
-    restart_btn = (rect){MARGIN, 210, bw, 110};
-    off_btn = (rect){MARGIN + bw + 40, 210, bw, 110};
-    kindle_btn = (rect){MARGIN, 350, W - 2 * MARGIN, 110};
+    wifi_btn = (rect){MARGIN, 180, bw, 96};
+    ssh_btn = (rect){MARGIN + bw + 40, 180, bw, 96};
+    restart_btn = (rect){MARGIN, 296, bw, 96};
+    off_btn = (rect){MARGIN + bw + 40, 296, bw, 96};
+    kindle_btn = (rect){MARGIN, 412, W - 2 * MARGIN, 96};
+    pill(wifi_btn, "Wi-Fi  ›", 0);
+    pill(ssh_btn, "SSH  ›", 0);
     pill(restart_btn, "Restart", 0);
     pill(off_btn, "Power off", 0);
     pill(kindle_btn, "Open the stock Kindle UI once", 0);
 
-    text(&f_serif_bold, 52, MARGIN, 490, "Battery", BLACK);
-    battery_graph(MARGIN, 566, W - 2 * MARGIN, 270);
+    text(&f_serif_bold, 52, MARGIN, 538, "Battery", BLACK);
+    battery_graph(MARGIN, 606, W - 2 * MARGIN, 230);
     int y = 870;
     text(&f_serif_bold, 52, MARGIN, y, "About this Kindle", BLACK);
     y += 90;
@@ -132,6 +152,8 @@ int main(void) {
         if (e.type == EV_POWER) return 0;
         if (e.type == EV_DOWN) {
             if (hit(back_btn, e.x, e.y)) press_on(back_btn);
+            else if (hit(wifi_btn, e.x, e.y)) press_on(wifi_btn);
+            else if (hit(ssh_btn, e.x, e.y)) press_on(ssh_btn);
             else if (hit(restart_btn, e.x, e.y)) press_on(restart_btn);
             else if (hit(off_btn, e.x, e.y)) press_on(off_btn);
             else if (hit(kindle_btn, e.x, e.y)) press_on(kindle_btn);
@@ -140,6 +162,11 @@ int main(void) {
         if (e.type != EV_TAP) continue;
         press_forget();
         if (hit(back_btn, e.x, e.y)) return 0;
+        if (hit(wifi_btn, e.x, e.y) || hit(ssh_btn, e.x, e.y)) {
+            run(hit(wifi_btn, e.x, e.y) ? "/usr/local/bin/wifi" : "/usr/local/bin/sshapp");
+            draw();
+            continue;
+        }
         if (hit(restart_btn, e.x, e.y)) return 11;
         if (hit(off_btn, e.x, e.y)) return 12;
         if (hit(kindle_btn, e.x, e.y)) return 10;
