@@ -72,7 +72,7 @@ The Kindle reboots, shows the Inkwell splash for a moment and opens the home scr
 
 Tap an app to open it, and tap the round arrow in the top left corner to go back. In Quill and TriKing the power button also goes back to the home screen. On the home screen the power button puts the Kindle to sleep, and pressing it again wakes it.
 
-**Wi-Fi.** Open Wi-Fi, tap **Scan**, tap your network and type its password. Inkwell remembers it in `linux/wifi.conf` and joins it at every boot. Wi-Fi is needed for the browser, arXiv, `getmodel` and setting the clock.
+**Wi-Fi.** Open Settings, then **Wi-Fi**, tap **Scan**, tap your network and type its password. Inkwell remembers it in `linux/wifi.conf` and joins it at every boot. Wi-Fi is needed for the browser, arXiv, `getmodel` and setting the clock.
 
 **The smart model.** Quill comes with the quick model (135 million parameters). The smart model, SmolLM2 360M, knows more and writes about 0.7 words per second. With Wi-Fi on, open Terminal and type `getmodel smart`. It downloads the model from [Hugging Face](https://huggingface.co/bartowski/SmolLM2-360M-Instruct-GGUF) (220 MB), checks it and puts it in `linux/models`, and the **quick** button in Quill then switches between the two. The first chat with each model takes a little longer while Quill prepares it.
 
@@ -124,10 +124,10 @@ Password logins are off on the USB link, and the release image carries no keys, 
 
 ### SSH over Wi-Fi
 
-The **SSH** app runs a second SSH server, on port 2022, that other computers on your Wi-Fi network can reach. It is off until you turn it on.
+**SSH**, under Settings, runs a second SSH server, on port 2022, that other computers on your Wi-Fi network can reach. It is off until you turn it on.
 
-1. Join a network in the Wi-Fi app.
-2. Open SSH and tap **Set a password**. It needs at least 8 characters, and it shows as you type it.
+1. Join a network under Settings, Wi-Fi.
+2. Open Settings, then SSH, and tap **Set a password**. It needs at least 8 characters, and it shows as you type it.
 3. Tap **Turn on**. The app shows the Kindle's Wi-Fi address and the command to type, for example `ssh -p 2022 root@192.168.1.42`.
 
 This server accepts the password and also the keys in `linux/authorized_keys`. Only a hash of the password is saved, in `linux/ssh-password` on the drive, and **Remove password** deletes it and leaves keys as the only way in. Anyone on the same network can try passwords, so pick a long one, or use a key and remove the password. SSH stays on across reboots until you turn it off.

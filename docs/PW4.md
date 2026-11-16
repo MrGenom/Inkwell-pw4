@@ -14,7 +14,8 @@ jailbroken with SpiderCat.
 | **Add-ons at boot.** `own-init` starts every executable in `/etc/own/rc.d` in the background (log: `/var/log/own-rc.log`). | `src/rootfs/sbin/own-init` |
 | **Wi-Fi after sleep.** After a suspend, Wi-Fi could reconnect while `wlan0` stayed without an address until a reboot. `wifi-dhcp-watchdog` checks every 20 s and renews or restarts DHCP. | `src/rootfs/etc/own/rc.d/` |
 | **More tools in the image**: htop, vim, nano, tmux, git, rsync and an SFTP server (for WinSCP, FileZilla or sshfs). | `build-rootfs.sh` |
-| **No Doom and no Minecraft.** SSH is first on the home screen. | `src/rootfs/etc/own/apps` |
+| **No Doom and no Minecraft.** | `src/rootfs/etc/own/apps` |
+| **Wi-Fi and SSH live in Settings.** Their buttons at the top of Settings open the same apps, and closing them comes back to Settings; the home screen no longer has their icons. | `src/ui/settings.c`, `src/rootfs/etc/own/apps` |
 | **Build fixes.** `release.sh` no longer copies an example config that was never committed (every release build failed on it), scripts keep LF line endings on Windows, and `tools/docker-build.sh` builds the release with Docker only. | `tools/`, `.gitattributes` |
 
 ## Build
@@ -62,7 +63,7 @@ then
 ssh -i keys/kindle_ed25519 -p 2222 root@192.168.15.244
 ```
 
-Over Wi-Fi, the **SSH** app starts a server on port 2022.
+Over Wi-Fi, **Settings → SSH** starts a server on port 2022.
 
 ## Files: notes
 
